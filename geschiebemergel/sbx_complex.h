@@ -1,5 +1,13 @@
-#ifndef SBX_COMPLEX_H
-#define SBX_COMPLEX_H
+/*
+ * sbx_complex.h
+ *
+ *  Created on: 08.05.2016
+ *      Author: delfs
+ */
+
+#ifndef SBX_COMPLEX_H_
+#define SBX_COMPLEX_H_
+
 
 #include <iostream>
 
@@ -11,7 +19,7 @@ namespace sbx {
 	//
 	// Complex numbers (real,imag)
 	//     including casts from real int or double
-	// Operations: 
+	// Operations:
 	//     c=-a, a++(=++a), a--(=--a),  c=a+b, c=a-b, c=a*b, c=a/b
 	//     ==, != istream, ostream, norm, complex conjugate c=!a
 	// Imaginary number i:
@@ -23,7 +31,7 @@ namespace sbx {
 	//     a++;
 	//     std::cout << a << " " << c << std::endl;
 	//
-	//     Generates output: (3,3) (4,8)   
+	//     Generates output: (3,3) (4,8)
 	//
 
 	class Complex{
@@ -46,15 +54,15 @@ namespace sbx {
 		Complex operator-();  // c = -a
 
 		// real number in-/decrement
-		//     pre- and postfix operators give equal results 
+		//     pre- and postfix operators give equal results
 		Complex operator++(); // prefix ++a
 		Complex operator--();
-		Complex operator++(int); // postfix a++ 
+		Complex operator++(int); // postfix a++
 		Complex operator--(int);
 
 		//     binary
-		//         selected option of friend fuctions 
-		//         to allow casts with non-complex number in first argument, 
+		//         selected option of friend fuctions
+		//         to allow casts with non-complex number in first argument,
 		//         e.g. c = 1 + a
 		friend Complex operator+(const Complex&, const Complex&);
 		friend Complex operator-(const Complex&, const Complex&);
@@ -78,11 +86,11 @@ namespace sbx {
 		friend std::istream& operator>>(std::istream&, Complex&);
 
 		// getter
-		friend double real(const Complex& a) 
+		friend double real(const Complex& a)
 		    { return a.real; }
-		friend double imag(const Complex& a) 
+		friend double imag(const Complex& a)
 		    { return a.imag; }
-		friend double norm(const Complex& a) 
+		friend double norm(const Complex& a)
 		    { return a.real * a.real + a.imag * a.imag; }
 
 	}; // class Complex
@@ -107,7 +115,7 @@ namespace sbx {
 
 	////////////////////////////////////////////////////////////////////////////////////
 	//
-	// addition (shallow) 
+	// addition (shallow)
 	//     a = a + b, a+=b : a = a.operator+=( b )
 
 	inline Complex Complex::operator+=(const Complex& b)
@@ -144,7 +152,7 @@ namespace sbx {
 
 	////////////////////////////////////////////////////////////////////////////////////
 	//
-	// division (shallow) 
+	// division (shallow)
 	//     a = a / b, a/=b : a = a.operator/=( b )
 
 	inline Complex Complex::operator/=(const Complex& b)
@@ -158,9 +166,9 @@ namespace sbx {
 
 	////////////////////////////////////////////////////////////////////////////////////
 	//
-	// praefix real number increment 
+	// praefix real number increment
 	//     c = a + (1,0)
-	//     equal to postfix real number increment 
+	//     equal to postfix real number increment
 	//     ++a : c = a.operator++()
 
 	inline Complex Complex::operator++()
@@ -173,7 +181,7 @@ namespace sbx {
 	//
 	// praefix real number decrement
 	//     c = a - (1,0)
-	//     equal to postfix real number decrement 
+	//     equal to postfix real number decrement
 	//     --a : c = a.operator--()
 
 	inline Complex Complex::operator--()
@@ -184,9 +192,9 @@ namespace sbx {
 
 	////////////////////////////////////////////////////////////////////////////////////
 	//
-	// postfix real number increment 
-	//     c = a + (1,0) 
-	//     equal to prefix real number increment 
+	// postfix real number increment
+	//     c = a + (1,0)
+	//     equal to prefix real number increment
 	//     a++ : c = a.operator++(1)
 
 	inline Complex Complex::operator++(int spam)
@@ -197,9 +205,9 @@ namespace sbx {
 
 	////////////////////////////////////////////////////////////////////////////////////
 	//
-	// postfix real number decrement 
-	//     c = a - (1,0), while c = a +  1 
-	//     equal to prefix real number decrement 
+	// postfix real number decrement
+	//     c = a - (1,0), while c = a +  1
+	//     equal to prefix real number decrement
 	//     a-- : c = a.operator--(1)
 
 	inline Complex Complex::operator--(int spam)
@@ -210,8 +218,8 @@ namespace sbx {
 
 	////////////////////////////////////////////////////////////////////////////////////
 	//
-	// complex conjugate 
-	//     c = real(a) - i * imag(b) 
+	// complex conjugate
+	//     c = real(a) - i * imag(b)
 
 	inline Complex Complex::operator!(void)
 	{
@@ -310,7 +318,7 @@ namespace sbx {
 
 	////////////////////////////////////////////////////////////////////////////////////
 	//
-	//  input stream 
+	//  input stream
 	//      operator>>(std::cin, a)
 	//          Real: ....
 	//          Imag: ....
@@ -326,4 +334,6 @@ namespace sbx {
 
 }  // namespace sbx
 
-#endif
+
+
+#endif /* SBX_COMPLEX_H_ */

@@ -30,13 +30,19 @@ namespace sbx {
 
 	public:
 		// constructor
-		Slice( double _lowerBound, double _upperBound, int _order = 1 ) 
-	    { 
-			lowerBound = _lowerBound, upperBound = _upperBound, order = _order;
-			setGaussData();
+		Slice() {}
+		Slice(int _order) { order = _order, setGaussData(); }
+		
+		void initialize(double _lowerBound, double _upperBound, int _order)
+		{
+			order = _order, setGaussData();
+			lowerBound = _lowerBound, upperBound = _upperBound;
 		}
 
+		void initialize(double _lowerBound, double _upperBound)  // order set with constructor
+		    { lowerBound = _lowerBound, upperBound = _upperBound; }
 		void setGaussData();
+
 		double integrate(double(*func)(double));
 	
 
@@ -157,51 +163,128 @@ namespace sbx {
 
 	double Slice::integrate(double(*func)(double))
 	{
-		double delta = upperBound - lowerBound;
 		double value = 0.;
-
 		for (int i = 0; i < order; i++)
 		{
-			value += gaussWeights[i] * func(lowerBound + gaussPoints[i] * delta);
+			value += gaussWeights[i] * func(lowerBound + gaussPoints[i] * (upperBound - lowerBound));
 		}
 
-		value *= delta;
+		value *= upperBound - lowerBound;
 		return value;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
 	//
 	// global integration of function func 
+
+
+	//
 	//     calls member function integrate and sums up results over vector vec of slices 	
 	//
+    
+	//
+	//         Vector
+	//
 
-	double integrate(Vector<Slice> vec, double(*func)(double))
+	double integrate(Vector<Slice> &vec, double(*func)(double))
+	{
+		double value = 0;
+                
+		for (Vector<Slice>::iterator itr = vec.begin(); itr != vec.end(); itr++)
+			value += itr->integrate(func);
+
+		return value;
+	}
+
+	//
+	//         array
+	//
+
+	double integrate(Slice* array, int arraySize, double(*func)(double))
 	{
 		double value = 0;
 
-		for (int i = 0; i < vec.size(); i++) 
-			value += vec[i].integrate(func);
+		for (int i = 0; i < arraySize; i++)
+			value += array[i].integrate(func);
+
+		return value;
+	}
+
+	//
+	//     calls member function integrate and sums up results over for loop
+	//
+
+	double integrate(double lowerBound, double upperBound, long numberOfElements, double(*func)(double))
+	{
+		double value = 0;
+		double delta = (upperBound - lowerBound) / numberOfElements;
+		double runningLowerBound = lowerBound + delta / 2;
+
+		for (long i = 0; i < numberOfElements; i++)
+		{
+			value += func(runningLowerBound);
+			runningLowerBound += delta;
+		}
+		value *= delta;
+
+
+		return value;
+	}
+
+	//
+	//     quadratic function hardcoded - sums up results over for loop
+	//
+
+	double integrateQuadratic(double lowerBound, double upperBound, long numberOfElements)
+	{
+		double value = 0;
+		double delta = (upperBound - lowerBound) / numberOfElements;
+		double runningLowerBound = lowerBound + delta / 2;
+
+		for (long i = 0; i < numberOfElements; i++)
+		{
+			value += runningLowerBound * runningLowerBound;
+			runningLowerBound += delta;
+		}
+		value *= delta;
+
 
 		return value;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
 	//
-	// build vector of slices 
-	//     order: order in gauss integration
+	// Set member variables lower and upper bound in slices (Vector<Slice>)
 
-	void stratify(double lowerBound, double upperBound, int numberOfEntries, Vector<Slice> &vec, int order = 1)
+	void initialize(double lowerBound, double upperBound, long numberOfEntries, Vector<Slice> &vec)
+	{
+		double delta = (upperBound - lowerBound) / numberOfEntries;
+		double runningLowerBound = lowerBound;
+        
+		for (Vector<Slice>::iterator itr = vec.begin(); itr != vec.end(); itr++)
+		{
+			itr->initialize(runningLowerBound, runningLowerBound + delta);
+			runningLowerBound += delta;
+		}
+	}
+
+	//
+	// Set member variables lower and upper bound, order, Gauss data in slices (Slice* array)
+	//
+
+	void initialize(double lowerBound, double upperBound, long numberOfEntries, int order, Slice* array)
 	{
 		double delta = (upperBound - lowerBound) / numberOfEntries;
 		double runningLowerBound = lowerBound;
 
-		for (int i = 0; i < numberOfEntries; i++)
+		for (long i = 0; i < numberOfEntries; i++)
 		{
-			Slice slice(runningLowerBound, runningLowerBound + delta, order);
+			array[i].initialize(runningLowerBound, runningLowerBound + delta, order);
 			runningLowerBound += delta;
-			vec.push_back(slice);
 		}
 	}
+
+	
 
 	////////////////////////////////////////////////////////////////////////////////////
 	//

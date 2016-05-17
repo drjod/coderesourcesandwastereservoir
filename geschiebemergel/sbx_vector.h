@@ -6,7 +6,6 @@
 
 namespace sbx {
 
-
 	////////////////////////////////////////////////////////////////////////////////////
 	//
 	// sbx class Vector
@@ -17,10 +16,7 @@ namespace sbx {
 	// concatenation                    c = cat(a,b)
 	// 1-norm        |a|_1=|a_1|_1 +  |a_2|_1 + ... + |a_n|_1 
 	//                                  |a|_1 = norm1(a)
-    //     overloaded to sum up integration results norm1(a, func)
-	//                                  stratify(lowerBound, upperBound, numberOfEntries, vec)
-	// output stream                    std::cout << a << std::endl
-
+    //  
 	
 	template <typename T>
 	class Vector : public std::vector<T>
@@ -28,8 +24,7 @@ namespace sbx {
 	public:
 		// constructors
 		Vector() : std::vector<T>(){};
-		Vector(int numberOfEntries, T value) : std::vector<T>(numberOfEntries, value){};
-
+		Vector(long numberOfEntries, T value) : std::vector<T>(numberOfEntries, value){};
 		////////////////////////////////////////////////////////////////////////////////////
 		//
         // addition (deep) 
@@ -42,7 +37,7 @@ namespace sbx {
 
 			if (a.size() == b.size())
 			{
-				for (int i = 0; i < a.size(); i++)
+				for (long i = 0; i < a.size(); i++)
 					c.push_back(a[i] + b[i]);
 			}
 			else
@@ -62,7 +57,7 @@ namespace sbx {
 
 			if (a.size() == b.size())
 			{
-				for (int i = 0; i < a.size(); i++)
+				for (long i = 0; i < a.size(); i++)
 					c.push_back(a[i] - b[i]);
 			}
 			else
@@ -83,7 +78,7 @@ namespace sbx {
 
 			if (a.size() == b.size())
 			{
-				for (int i = 0; i < a.size(); i++)
+				for (long i = 0; i < a.size(); i++)
 					value += a[i] * b[i];
 			}
 			else
@@ -100,7 +95,7 @@ namespace sbx {
 
 		friend Vector cat(Vector a, Vector b)
 		{
-			for (int i = 0; i < b.size(); i++)
+			for (long i = 0; i < b.size(); i++)
 				a.push_back(b[i]);
 
 			return a;
@@ -113,11 +108,11 @@ namespace sbx {
 		//         |a|_1 = |a_1| +  |a_2| +  |a_3| + ... 	
 		//
 
-		friend double norm1(const Vector &a, double(*func)(double))
+		friend double norm1(const Vector &a)
 		{
 			double value = 0;
 
-			for (int i = 0; i < a.size(); i++)
+			for (long i = 0; i < a.size(); i++)
 				value += fabs(a[i]);
 
 			return value;
@@ -131,7 +126,7 @@ namespace sbx {
 		friend std::ostream& operator<<(std::ostream& stream, Vector a)
 		{
 			stream << "[";
-			for (int i = 0; i < a.size(); i++)
+			for (long i = 0; i < a.size(); i++)
 				stream << " " << a[i];
 
 			stream << " ]";
