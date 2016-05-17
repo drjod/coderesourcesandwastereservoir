@@ -12,8 +12,6 @@ using namespace sbx;
 
 int main(int argc, char** argv)
 {
-	Double a=1., b=0., c;
-	c=a/b;
 	Clock time;
 	Output result( "result.txt" );
 	Bcgs bcgs_solver( 0, 1.e-5, 100000, norm_0 );
@@ -25,10 +23,10 @@ int main(int argc, char** argv)
 
 	time.start("Solver");
 	bcgs_solver.execute( &groundwater );
-    time.measure( CONSOLE );
+        time.measure( CONSOLE );
 
-    show( "Result x",!(*groundwater.get_result()), 0, CONSOLE );
-    result.write( "x", *groundwater.get_result() );
+        show( "Result x",!(*groundwater.get_result()), 0, CONSOLE );
+        result.write( "x", *groundwater.get_result() );
 
 	return 0;
 }
