@@ -7,7 +7,7 @@
 
 #define CONSOLE std::cout
 
-enum { REGULAR, TRANSPOSE }; // output format
+
 
 
 namespace sbx {
@@ -47,8 +47,8 @@ namespace sbx {
 
         std::ofstream& get_stream(void) { return outstream; }
 
-        template <typename T_VARIABLE> void write( std::string variableName, T_VARIABLE variable, int verbosityLevel = 0, int format = REGULAR )
-        { writeVariable( variableName , variable, outstream, verbosityLevel, format ); }
+        template <typename T_VARIABLE> void write( std::string variableName, T_VARIABLE variable, int verbosityLevel = 0 )
+        { writeVariable( variableName , variable, outstream, verbosityLevel ); }
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,22 +66,17 @@ namespace sbx {
     //
     // Non-member functions that support also console output (T_STREAM& std::cout)
 
-    template <typename T_VARIABLE, typename T_STREAM> void writeVariable( std::string info, T_VARIABLE* variable, T_STREAM& outstream, int verbosityLevel, int format = REGULAR )
+    template <typename T_VARIABLE, typename T_STREAM> void writeVariable( std::string info, T_VARIABLE* variable, T_STREAM& outstream, int verbosityLevel )
     {
         if( verbosityLevel < verbosity )
         {
             outstream << info << ": " << std::endl;
-            if ( format == REGULAR )
-                outstream << *variable << std::endl << std::endl;
-            else if ( format == TRANSPOSE )
-                outstream << !(*variable) << std::endl << std::endl;
-            else
-                std::cout << "ERROR - Wrong format " << format << std::endl;
+            outstream << *variable << std::endl << std::endl;
         }
     }
 
-    template <typename T_VARIABLE, typename T_STREAM> void show( std::string info, T_VARIABLE* variable, T_STREAM& outstream, int verbosityLevel, int format = REGULAR )
-    { writeVariable( info, variable, outstream, verbosityLevel, format ); }
+    template <typename T_VARIABLE, typename T_STREAM> void show( std::string info, T_VARIABLE* variable, T_STREAM& outstream, int verbosityLevel )
+    { writeVariable( info, variable, outstream, verbosityLevel ); }
 
     template <typename T_STREAM> void inform( std::string info, T_STREAM& outstream, int verbosityLevel )
     {

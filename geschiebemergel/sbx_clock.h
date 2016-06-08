@@ -2,6 +2,7 @@
 #define SBX_CLOCK_H_
 
 #include <chrono>
+#include <string>
 
 namespace sbx
 {
