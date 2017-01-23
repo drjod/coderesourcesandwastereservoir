@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>Game of Life</title>
+</head>
+
+<body id="body">
+
+<canvas id="playground" width="500" height="500" style="border:1px solid #000000;">
+Your browser does not support the HTML5 canvas tag.
+</canvas>
+
+<br>
+<button onclick="update_playground()">Next step</button>
+<button id="start_button" onclick="march_through_steps();">Start movie</button>
+<button id="stop_button" onclick="stop_marching()">Stop movie</button>
+
+<script type="text/javascript" src="gol.js"></script>
+</body>
+
+
+</html>
