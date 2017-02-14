@@ -167,18 +167,16 @@ namespace sbx {
             set_matrix_pointer( eqn );
             size = A->dim2(); // n x n
             double factor, temp;
-            double __A;
             // elimination - mode 0
             for ( SIZE_T p = 0; p < size-1; p++) // pivot
             {
+                if ( (*A)(p, p) == 0 )
+                    solver_error("Division by zero in Gauss elemination");
                 for ( SIZE_T i = p+1; i < size; i++)
                 {
                     if( (*A)(i, p ) != 0 )
                     {
-                    	__A = (*A)(p, p);
-                    	if ( __A == 0 )
-                    	    solver_error("Division by zero in Gauss elemination");
-                        factor = (*A)(i, p) / __A;
+                        factor = (*A)(i, p) / (*A)(p, p;
                         for ( SIZE_T j = p+1; j < size; j++)
                         {
                         	(*A)(i, j) = (*A)(i, j) - factor * (*A)(p,j);
@@ -192,13 +190,12 @@ namespace sbx {
             // substitution - mode 1
             for ( SIZE_T i = size-1; i >=0; i--)
             {
+                if ( (*A)(i, i) == 0 )
+                    solver_error("Division by zero in Gauss substitution");
                 temp = 0;
                 for ( SIZE_T j = i+1; j < size; j++)
                     temp += (*A)(i,j)* (*x)(j);
-                __A = (*A)(i, i);
-                if ( __A == 0 )
-                    solver_error("Division by zero in Gauss substitution");
-                (*x)(i) = ( (*b)(i) - temp  ) /  __A ;
+                (*x)(i) = ( (*b)(i) - temp  ) /  (*A)(i, i) ;
             }
 
         }
