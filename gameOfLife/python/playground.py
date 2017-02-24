@@ -37,16 +37,10 @@ class Playground:
         :param y: (int)
         :return: new status of cell - 0: dead, 1: alive
         """
-        neighbors_alive = 0
-        for item in self.determine_neighbors(x, y):
-            neighbors_alive += self.get_cell_status(item.x, item.y)
+        neighbors_alive = sum(self.get_cell_status(item.x, item.y) for item in self.determine_neighbors(x, y))
         status_old = self.get_cell_status(x, y)
 
-        if neighbors_alive == 3:
-            return 1
-        if neighbors_alive == 2 and status_old == 1:
-            return 1
-        return 0
+        return 1 if neighbors_alive == 3 or (neighbors_alive == 2 and status_old == 1) else 0
 
     def determine_neighbors(self, x, y):
         """
@@ -55,20 +49,19 @@ class Playground:
         :param y: (int)
         :return: list of tuples (x,y), which are the neighbors
         """
-        max_x = self.__cells_status.shape[0]
-        max_y = self.__cells_status.shape[1]
+        max_x, max_y = self.__cells_status.shape[0], self.__cells_status.shape[1]
 
-        result = list()
-        result.append(Cell((x - 1 + max_x) % max_x, (y - 1 + max_y) % max_y))
-        result.append(Cell((x - 1 + max_x) % max_x, y))
-        result.append(Cell((x - 1 + max_x) % max_x, (y + 1) % max_y))
-        result.append(Cell(x, (y - 1 + max_y) % max_y))
-        result.append(Cell(x, (y + 1) % max_y))
-        result.append(Cell((x + 1) % max_x, (y - 1 + max_y) % max_y))
-        result.append(Cell((x + 1) % max_x, y))
-        result.append(Cell((x + 1) % max_x, (y + 1) % max_y))
+        neighbors_list = list()
+        neighbors_list.append(Cell((x - 1 + max_x) % max_x, (y - 1 + max_y) % max_y))
+        neighbors_list.append(Cell((x - 1 + max_x) % max_x, y))
+        neighbors_list.append(Cell((x - 1 + max_x) % max_x, (y + 1) % max_y))
+        neighbors_list.append(Cell(x, (y - 1 + max_y) % max_y))
+        neighbors_list.append(Cell(x, (y + 1) % max_y))
+        neighbors_list.append(Cell((x + 1) % max_x, (y - 1 + max_y) % max_y))
+        neighbors_list.append(Cell((x + 1) % max_x, y))
+        neighbors_list.append(Cell((x + 1) % max_x, (y + 1) % max_y))
 
-        return result
+        return neighbors_list
 
     def init_field(self, strings):
         """
@@ -91,10 +84,7 @@ class Playground:
         """
         for y in range(self.__cells_status.shape[1]):
             for x in range(self.__cells_status.shape[0]):
-                if self.__cells_status[x][y] == 0:
-                    stdout.write(' ')
-                else:
-                    stdout.write('*')
+                stdout.write(' ' if self.__cells_status[x][y] == 0 else '*')
             stdout.write('\n')
         stdout.flush()
 
