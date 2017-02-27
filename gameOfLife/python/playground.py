@@ -1,103 +1,44 @@
 import numpy as np
-from sys import stdout
-
-
-class Cell:
-    def __init__(self, _x, _y):
-        self.x, self.y = _x, _y
 
 
 class Playground:
-    def __init__(self, max_x, max_y):
-        """
 
-        :param max_x: (int)
-        :param max_y: (int)
-        """
-        self.__cells_status = np.zeros((max_x, max_y))
+    @property
+    def cells(self):
+        return self.__cells
 
-    def get_cell_status(self, x, y):
-        return self.__cells_status[x][y]
+    def __init__(self, size, random_flag):
+        if random_flag:
+            self.__cells = (np.random.rand(size, size) > 0.5).astype('uint8')
+        else:
+            self.__cells = np.zeros((size, size)).astype('uint8')
+            strings =[" ",
+                      " ",
+                      "     ***",
+                      "     * *",
+                      "     * *",
+                      " ",
+                      "     * *",
+                      "     * *",
+                      "     ***"]
 
-    def set_cell_status(self, x, y, value):
-        self.__cells_status[x][y] = value
+            for x, string_item in enumerate(strings):
+                for y, char_item in enumerate(list(string_item)):
+                    if char_item == ' ':
+                        self.__cells[x][y] = 0
+                    elif char_item == '*':
+                        self.__cells[x][y] = 1
+                    # else ignore, e.g. '\n'
 
-    def is_alive(self):
-        """
-        looks if at least one cell in the playground is alive
-        :return: (bool)
-        """
-        return True if np.count_nonzero(self.__cells_status) > 0 else False
+        ndx = np.r_[0:size]
+        self.__up = np.roll(ndx, -1)
+        self.__down = np.roll(ndx, 1)
 
-    def determine_new_cell_status(self, x, y):
-        """
-        looks who are neighbors and then how many neighbors are alive
-        based on that it returns the new cell status
-        :param x: (int)
-        :param y: (int)
-        :return: new status of cell - 0: dead, 1: alive
-        """
-        neighbors_alive = sum(self.get_cell_status(item.x, item.y) for item in self.determine_neighbors(x, y))
-        status_old = self.get_cell_status(x, y)
+    def update(self):
+        neighbors = self.__cells[self.__up, :] + self.__cells[self.__down, :] + \
+                    self.__cells[:, self.__up] + self.__cells[:, self.__down] + \
+                    self.__cells[np.ix_(self.__up, self.__up)] + self.__cells[np.ix_(self.__up, self.__down)] + \
+                    self.__cells[np.ix_(self.__down, self.__up)] + self.__cells[np.ix_(self.__down, self.__down)]
 
-        return 1 if neighbors_alive == 3 or (neighbors_alive == 2 and status_old == 1) else 0
+        self.__cells = (neighbors == 3) | (self.__cells & (neighbors == 2))
 
-    def determine_neighbors(self, x, y):
-        """
-        provides neighbors - 0 is neighbor of max (and vice versa) for x and y
-        :param x: (int)
-        :param y: (int)
-        :return: list of tuples (x,y), which are the neighbors
-        """
-        max_x, max_y = self.__cells_status.shape[0], self.__cells_status.shape[1]
-
-        neighbors_list = list()
-        neighbors_list.append(Cell((x - 1 + max_x) % max_x, (y - 1 + max_y) % max_y))
-        neighbors_list.append(Cell((x - 1 + max_x) % max_x, y))
-        neighbors_list.append(Cell((x - 1 + max_x) % max_x, (y + 1) % max_y))
-        neighbors_list.append(Cell(x, (y - 1 + max_y) % max_y))
-        neighbors_list.append(Cell(x, (y + 1) % max_y))
-        neighbors_list.append(Cell((x + 1) % max_x, (y - 1 + max_y) % max_y))
-        neighbors_list.append(Cell((x + 1) % max_x, y))
-        neighbors_list.append(Cell((x + 1) % max_x, (y + 1) % max_y))
-
-        return neighbors_list
-
-    def init_field(self, strings):
-        """
-        initializes cell_status based on lit of strings
-        :param strings: list of strings - ' ': dead cell, '*': cell is alive
-        :return:
-        """
-        for x, string_item in enumerate(strings):
-            for y, char_item in enumerate(list(string_item)):
-                if char_item == ' ':
-                    self.__cells_status[x][y] = 0
-                elif char_item == '*':
-                    self.__cells_status[x][y] = 1
-                # else ignore, e.g. '\n'
-
-    def print(self):
-        """
-        console output
-        :return:
-        """
-        for y in range(self.__cells_status.shape[1]):
-            for x in range(self.__cells_status.shape[0]):
-                stdout.write(' ' if self.__cells_status[x][y] == 0 else '*')
-            stdout.write('\n')
-        stdout.flush()
-
-    def next_playground(self):
-        """
-        create and return new playground instance with new cell status
-        :return:
-        """
-        playground_next = Playground(self.__cells_status.shape[0],
-                                     self.__cells_status.shape[1])
-
-        for x in range(self.__cells_status.shape[0]):
-            for y in range(self.__cells_status.shape[1]):
-                playground_next.set_cell_status(x, y, self.determine_new_cell_status(x, y))
-
-        return playground_next
